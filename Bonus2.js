@@ -27,21 +27,33 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
 
         const promises = [destinationPromise, weatherPromise, airportsPromise]//array di promises (fetchJson)
         console.log(promises)
-        const [destinations, weathers, airports] = await Promise.allSettled(promises)//invece delle 3 qui sotto facciamo destructuring
-        console.log([destinations, weathers, airports])
-        //per controllare se dati sono validi uso ternario - BONUS1
-        const destination = destinations[0]
-        const weather = weathers[0]
-        const airport = airports[0]
+        const [destinationsResult, weathersResult, airportsResult] = await Promise.allSettled(promises)//invece delle 3 qui sotto facciamo destructuring
+        // console.log([destinations, weathers, airports])
 
-        return {//ternario e per fare il controllo
-            // city: destinations[0].name,//primo elemento da ogni risposta (risposta di API e un array)
-            city: destination ? destination.name : null,
-            country: destination ? destination.country : null,
-            temperature: weather ? weather.temperature : null,
-            weather: weather ? weather.weather_description : null,
-            airport: airport ? airport.name : null
+        //BONUS 2 -CONTROLLO RISULTATI
+        const data = {
+
         }
+        if(destinationsResult.status === "rejected"){
+            console.error("problema in destination", destinationsResult.reason)
+            data.city = null;
+            data.country = null
+        }else {
+            const destination = destinationsResult.value[0];
+            data.city = destination ? destination.name : null,
+        }
+
+        return data
+
+        //Promise.allSettled
+        //se metto semplicemente Promise.allSettled non compare errore ma risultati dell oggeto returned sono tutti null
+        //gli oggetti di promiseallSettled [destinations, weathers, airports] mostrano uno status:
+        //fulfileld hanno proprieta value, che e l array
+        //rejected: ex: prima promise ha "falso" quindi rejected -reason rappresenta l errore
+        //creiamo un oggetto data da popolare in base a delle condizioni
+
+        //per controllare se dati sono validi uso ternario - BONUS1
+   
     } catch (error) {//se richiesta API fallisce
         throw new Error(`errore nel recupero dei dati: ${error.message}`)
     }
