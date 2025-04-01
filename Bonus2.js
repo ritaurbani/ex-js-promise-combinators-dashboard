@@ -18,7 +18,7 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
 
         console.log(`caricamento dashboard query ${query}`)
         //1.creo 3 promises in attesa di risoluzione una per ogni richiesta (eseguite in parallelo senza await)- raccoglie promessa res.json()
-        const destinationPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapifalso/destinations?search=${query}`)
+        const destinationPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapifalso/destinations?search=${query}`)//con falso
         console.log(destinationPromise)
         const weatherPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapi/weathers?search=${query}`)
         console.log(weatherPromise)
@@ -38,9 +38,26 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
             console.error("problema in destination", destinationsResult.reason)
             data.city = null;
             data.country = null
-        }else {
+        }else {//se non e rejected e andatoa buon fine quindi ho valore 
             const destination = destinationsResult.value[0];
-            data.city = destination ? destination.name : null,
+            data.city = destination ? destination.name : null
+        }
+
+        if(weathersResult.status === "rejected"){
+            console.error("problema in weathers", weathersResult.reason)
+            data.temperature = null;
+            data.weather = null       
+        }else{
+            const weather = weathersResult.value[0];
+            data.temperature = weather ? weather.weather_description : null;
+            data.weather = weather ? weather.weather_description : null;
+        }
+        if(airportsResult.status === "rejected"){
+            console.error("Problema in airport", airportsResult.reason)
+            data.airport = null
+        }else{
+            const airport = airportsResult.value[0];
+            data.airport = airport? airport.name : null
         }
 
         return data
