@@ -32,6 +32,29 @@
 //per rendere piu leggibile posso creare funzione fetchJson
 // Essere asincrona(async). //le async anche se tornano valore (Ex: return object), in realta
 // ritornano una promise che risolve quel valore > questo valore deve contenere dati aggregati raccolti da queste 3 API
+
+const rita = {
+    nome: 'Rita',
+    classe: 135,
+    microfono: {
+        integrato: true,
+        marca: 'Sennheiser',
+        funziona: null
+    },
+    canta: () => {
+        console.log('Lalalala');
+    }
+}
+
+const ritaClone = {
+    ...rita,
+    microfono: {
+        ...rita.microfono
+    }
+}
+
+// ?
+
 async function fetchJson(url) {//per evitare il then
     const response = await fetch(url)
     const object = await response.json()
@@ -46,15 +69,15 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
         const destinationPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapi/destinations?search=${query}`)
         console.log(destinationPromise)
         const weatherPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapi/weathers?search=${query}`)
-        console.log(weatherPromise)
         const airportsPromise = fetchJson(`https://boolean-spec-frontend.vercel.app/freetestapi/airports?search=${query}`)
         console.log(airportsPromise)
-
+        
         const promises = [destinationPromise, weatherPromise, airportsPromise]//array di promises (fetchJson)
         console.log(promises)
         //attende che le 3 chiamate(promise) siano risolte e restituisce array di risultati
         // const results = await Promise.all(promises)//mi ritorna una promise che con await ritorna un array di results(dato che ogni promise ritorna in resolve) di ogni promise
-        const [destinations,weathers,airports] = await Promise.all(promises)//invece delle 3 qui sotto facciamo destructuring
+        const [destinations, weathers, airports] = await Promise.all(promises)//invece delle 3 qui sotto facciamo destructuring
+        console.log(weatherPromise)
         //Estrazione risultati array results
         // const destinations = results[0] //dati della destinazione (prima API)
         // const weathers = results[1]//dati del tempo
@@ -69,11 +92,11 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
             // city: destinations[0].name,//primo elemento da ogni risposta (risposta di API e un array)
             city: destination ? destination.name : null,
             country: destination ? destination.country : null,
-            temperature: weather? weather.temperature: null,
+            temperature: weather ? weather.temperature : null,
             weather: weather ? weather.weather_description : null,
             airport: airport ? airport.name : null
         }
-    }catch(error){//se richiesta API fallisce
+    } catch (error) {//se richiesta API fallisce
         throw new Error(`errore nel recupero dei dati: ${error.message}`)
     }
 }
@@ -85,15 +108,55 @@ getDashboardData("vienna")//london corretto - vienna has weather array vuoto
     .then(data => {//THEN RICEVE I DATI(gestisce risultato di una promise) E LI STAMPA - la promise resolve un data
         console.log("Dashboard data", data);
         let frase = "";
-        if(data.city !== null && data.country !== null){
+        if (data.city !== null && data.country !== null) {
             frase += `${data.city} is in ${data.country}.\n`
         }
-        if (data.temperature !== null && data.weather !== null){
+        if (data.temperature !== null && data.weather !== null) {
             frase += `Today there are ${data.temperature} degree amd the weather is ${data.weather}.\n`
         }
-        if(data.airport !== null){
-            frase+= `The main airport is ${data.airport}.\n`
+        if (data.airport !== null) {
+            frase += `The main airport is ${data.airport}.\n`
         }
         console.log(frase)
     })//se chiamata fallisce invece di then eseguiamo catch
     .catch(error => console.error(error))
+
+const film = [
+    {
+        titolo: "Il Padrino",
+        regista: "Francis Ford Coppola",
+        anno: 1972,
+        genere: "Crime",
+        durataMinuti: 175
+    },
+    {
+        titolo: "Inception",
+        regista: "Christopher Nolan",
+        anno: 2010,
+        genere: "Sci-Fi",
+        durataMinuti: 148
+    },
+    {
+        titolo: "Parasite",
+        regista: "Bong Joon-ho",
+        anno: 2019,
+        genere: "Thriller",
+        durataMinuti: 132
+    },
+    {
+        titolo: "La vita è bella",
+        regista: "Roberto Benigni",
+        anno: 1997,
+        genere: "Drammatico",
+        durataMinuti: 116
+    },
+    {
+        titolo: "Pulp Fiction",
+        regista: "Quentin Tarantino",
+        anno: 1994,
+        genere: "Crime",
+        durataMinuti: 154
+    }
+];
+
+film.sort(() => {})
