@@ -75,7 +75,8 @@ async function getDashboardData(query) {//queste operazioni anche se effettuate 
         const promises = [destinationPromise, weatherPromise, airportsPromise]//array di promises (fetchJson)
         console.log(promises)
         //attende che le 3 chiamate(promise) siano risolte e restituisce array di risultati
-        // const results = await Promise.all(promises)//mi ritorna una promise che con await ritorna un array di results(dato che ogni promise ritorna in resolve) di ogni promise
+        // const results = await Promise.all(promises)//mi ritorna una promise che con await ritorna un array di results
+        // (dato che ogni promise ritorna in resolve) di ogni promise
         const [destinations, weathers, airports] = await Promise.all(promises)//invece delle 3 qui sotto facciamo destructuring
         console.log(weatherPromise)
         //Estrazione risultati array results
